@@ -3,6 +3,7 @@ import CM from "./components/CM";
 // import Footer from "./components/Footer";
 
 function App() {
+
   return (
     <EthProvider>
       <div id="App">

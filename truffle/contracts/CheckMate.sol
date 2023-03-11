@@ -4,10 +4,11 @@ pragma solidity >=0.4.22 <0.9.0;
 contract CheckMate {
     event Added(uint256 index);
 
-    struct State {
-        string location;
-        address party;
-        string dateAndTime;
+    struct User {
+        string name;
+        string email;
+        address wallet;
+        string role;
     }
 
     struct Product {
@@ -19,11 +20,58 @@ contract CheckMate {
         address owner;
     }
 
+    struct State {
+        string location;
+        address party;
+        string dateAndTime;
+    }
+
+    mapping(uint256 => User) Users;
+
     mapping (uint256 => mapping(uint256 => State)) locations;
 
     mapping(uint256 => Product) allProducts;
 
+    uint256 nthUser = 0;
+
     uint256 nthItem = 0; //For productID
+
+    function addUser(string memory _name, string memory _email) public returns (bool) {
+        User memory user = User({name: _name, email: _email, wallet: msg.sender, role: "consumer"});
+
+        Users[nthUser] = user;
+
+        nthUser ++;
+
+        return true;
+    }
+
+    function getUser() public view returns (User memory) {
+        for(uint i = 0; i < nthUser; i ++) {
+            if(Users[i].wallet == msg.sender) {
+                return Users[i];
+            }
+        }
+    }
+
+    function checkUser() public view returns (bool) {
+        for(uint i = 0; i < nthUser; i ++) {
+            if(Users[i].wallet == msg.sender) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function updateUser(string memory _name, string memory _email) public {
+        for(uint i = 0; i < nthUser; i ++) {
+            if(Users[i].wallet == msg.sender) {
+                Users[i].name = _name;
+                Users[i].email = _email;
+                break;
+            }
+        }
+    }
 
     //Adding new Product to the blockchain network
     function registerProduct(string memory _name, uint _batch) public returns (bool) {

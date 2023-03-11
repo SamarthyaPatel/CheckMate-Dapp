@@ -1,10 +1,11 @@
 import { useState } from "react";
+import UpdateProfile from "./UpdateProfile";
 
-function Profile() {
+function Profile({user}) {
 
-    // const [name, setName] = useState("");
-    // const [email, setEmail] = useState("");
-    // const [wallet, setWallet] = useState("");
+    const [name, setName] = useState(user.name);
+    const [email, setEmail] = useState(user.email);
+    const wallet = user.wallet;
 
     const [form, setForm] = useState(false);
     const [buttonValue, setButtonValue] = useState("Edit");
@@ -19,71 +20,36 @@ function Profile() {
         }
     };
 
-    // const read = async () => {
-    //     const value = await contract.methods.getProduct(product_id).call({ from: accounts[0] });
-    //     const state = await contract.methods.fetchStates(product_id).call({ from: accounts[0] });
-    //     const nth = await contract.methods.getNumber().call({ from: accounts[0] });
-    //     console.log(state)
-    //     console.log(nth)
-    //     console.log("Metamask: " + window.ethereum.selectedAddress)
-    //     const ethereum = window['ethereum'];
-    //     setUser(ethereum['selectedAddress']);
-    //     setValue(value);
-    //   };
-
-    function Form() {
-        if(!form) {
-            return(
-                <>
-                    <div className="card-body">
-                        <form action="" className="row g-3">
-                            <div className="col-md-6">
-                                <label class="">Name: </label>
-                                <p class="form-control m-0">Samarthya Patel</p>
-                            </div>
-                            <div className="col-md-6">
-                                <label class="">Email: </label>
-                                <p class="form-control m-0">samarthya@checkmate.com</p>
-                            </div>
-                            <div class="col-12">
-                                <label class="">Wallet Address: </label>
-                                <p class="form-control m-0">0x001001010212314233534549013284785</p>
-                            </div>
-                        </form>
-                    </div>
-                    <button className="m-3 btn btn-light" onClick={updateForm}>{buttonValue}</button>
-                </>
-            );
-        } else {
-            return(
-                <>
-                    <div className="card-body">
-                        <form action="" className="row g-3">
-                            <div className="col-md-6">
-                                <label class="">Name: </label>
-                                <input class="form-control" type="text" value="Samarthya Patel"/>
-                            </div>
-                            <div className="col-md-6">
-                                <label class="">Email: </label>
-                                <input class="form-control" type="text" value="samarthya@checkmate.com"/>
-                            </div>
-                            <div class="col-12">
-                                <label class="">Wallet Address: </label>
-                                <input class="form-control" type="text" value="0x001001010212314233534549013284785"/>
-                            </div>
-                        </form>
-                    </div>
-                    <button className="m-3 btn btn-success" onClick={updateForm}>{buttonValue}</button>
-                </>
-            );
-        }
+    function Edit() {
+        return(
+            <div>
+                <div className="card-body">
+                    <form className="row g-3">
+                        <div className="col-md-6">
+                            <label className="">Name: </label>
+                            <p className="form-control m-0" type="text"> {name} </p>
+                        </div>
+                        <div className="col-md-6">
+                            <label className="">Email: </label>
+                            <p className="form-control m-0" type="text"> {email} </p>
+                        </div>
+                        <div className="col-12">
+                            <label className="">Wallet Address: </label>
+                            <p className="form-control m-0"> {wallet} </p>
+                        </div>
+                    </form>
+                </div>
+                <button className="m-3 btn btn-light" onClick={updateForm}>{buttonValue}</button>
+            </div>
+        );
     }
-
 
     return (
     <div className="card mt-4 p-2">
-        <Form />
-        
+        {
+            !form ? <Edit/> :
+                <UpdateProfile name={name} setName={setName} email={email} setEmail={setEmail} wallet={wallet} updateForm={updateForm}/>
+        }
     </div>)
 }
 
