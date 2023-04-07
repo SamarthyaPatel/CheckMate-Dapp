@@ -1,6 +1,5 @@
 import useEth from "../../contexts/EthContext/useEth";
 
-
 function UpdateProfile( {name, email, wallet, updateForm, setName, setEmail} ) {
 
     const { state: { contract, accounts } } = useEth();

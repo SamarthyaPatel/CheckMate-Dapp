@@ -5,25 +5,26 @@ import Home from "./Home";
 import Messages from "./Messages";
 import useEth from "../../contexts/EthContext/useEth";
 
-function Interface() {
+function Interface({role}) {
 
-    const [component, setComponent] = useState(0);
+    const [component, setComponent] = useState(2);
     const { state: { contract, accounts } } = useEth();
-    const [user, setUser] = useState();
+    const [user, setUser] = useState("");
 
-
-    const read = async () => {
-        const res = await contract.methods.getUser().call({ from: accounts[0] });
-        console.log(res)
-        setUser(res)
-        setComponent(1)
-    };
-
+    const fetchUser = async () => {
+            const res = await contract.methods.getUser().call({ from: accounts[0] });
+            await setUser(res)
+        };
+    
+    if(user === "") {
+        fetchUser();
+    }
+    
     function Component() {
         if (component === 1) {
             return <Profile user={user}/>
         } else if(component === 2){
-            return <Home />
+            return <Home role={role}/>
         } else if(component === 3) {
             return <Messages />
         }
@@ -33,9 +34,9 @@ function Interface() {
         <div>
             <Title/>
             <div className="d-flex justify-content-around mt-4">
-                <button className="btn btn-warning " onClick={read}>Profile</button>
-                <button className="btn btn-warning " onClick={() =>{setComponent(2)}}>Home</button>
-                <button className="btn btn-warning " onClick={() =>{setComponent(3)}}>Messages</button>
+                <button className="btn btn-warning" onClick={() => {setComponent(1)}}>Profile</button>
+                <button className="btn btn-warning" onClick={() => {setComponent(2)}}>Home</button>
+                <button className="btn btn-warning" onClick={() => {setComponent(3)}}>Messages</button>
             </div>
             <Component/>
         </div>

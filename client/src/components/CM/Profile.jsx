@@ -8,15 +8,12 @@ function Profile({user}) {
     const wallet = user.wallet;
 
     const [form, setForm] = useState(false);
-    const [buttonValue, setButtonValue] = useState("Edit");
 
     const updateForm = () =>  {
         if(!form) {
             setForm(true)
-            setButtonValue("Save")
         } else {
             setForm(false)
-            setButtonValue("Edit")
         }
     };
 
@@ -38,8 +35,11 @@ function Profile({user}) {
                             <p className="form-control m-0"> {wallet} </p>
                         </div>
                     </form>
+                    <div className="d-flex justify-content-around">
+                    <button className="col-3 mt-5 btn btn-light" onClick={updateForm}>Edit</button>
+                    </div>
                 </div>
-                <button className="m-3 btn btn-light" onClick={updateForm}>{buttonValue}</button>
+                
             </div>
         );
     }

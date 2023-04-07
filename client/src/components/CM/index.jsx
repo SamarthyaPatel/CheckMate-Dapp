@@ -8,7 +8,7 @@ import RegisterUser from "./RegisterUser";
 function CM() {
   const { state } = useEth();
   const { state: { contract, accounts } } = useEth();
-  const [user, setValue] = useState();
+  const [user, setValue] = useState(true);
   
   const checkUser = async () => { 
     const res = await contract.methods.checkUser().call({ from: accounts[0] })
@@ -18,10 +18,10 @@ function CM() {
   
   function Page() {
     
-    if(!user) {
+    if(user === "false") {
         return <RegisterUser setValue={setValue}/>
     } else {
-        return <Interface />
+        return <Interface role={user}/>
     }
     
   }

@@ -1,8 +1,7 @@
 function NoticeNoArtifact() {
   return (
-    <p>
-      ⚠️ Cannot find <span className="code">SimpleStorage</span> contract artifact.
-      Please complete the above preparation first, then restart the react dev server.
+    <p className="text-center mt-5">
+      ⚠️ Please start local Blockchain network on Ganache.
     </p>
   );
 }
