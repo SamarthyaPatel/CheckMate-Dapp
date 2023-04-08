@@ -3,25 +3,15 @@ import Manufacturer from "./Manufacturer";
 import Supplier from "./Supplier";
 
 
-function Home({role}) {
+function Home({role, user}) {
 
     function RoleBasedInterface() {
         if(role === "consumer") {
-            return <Consumer /> 
+            return <Consumer user={user}/> 
         } else if (role === "manufacturer") {
-            return <Manufacturer />
+            return <Manufacturer user={user}/>
         } else if (role === "supplier") {
-            return <Supplier />
-        } else if (role === "admin") {
-            return(
-                <>
-                    <Consumer /> 
-                    <hr />
-                    <Manufacturer />
-                    <hr />
-                    <Supplier />
-                </>
-            )
+            return <Supplier user={user}/>
         }
     }
 

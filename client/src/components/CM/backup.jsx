@@ -91,5 +91,3 @@ function Manufacturer() {
         </div>
     )
 }
-
-export default Manufacturer;

@@ -2,26 +2,46 @@ import useEth from "../../contexts/EthContext/useEth";
 import NoticeNoArtifact from "./NoticeNoArtifact";
 import NoticeWrongNetwork from "./NoticeWrongNetwork";
 import Interface from "./Interface";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RegisterUser from "./RegisterUser";
 
 function CM() {
   const { state } = useEth();
   const { state: { contract, accounts } } = useEth();
-  const [user, setValue] = useState(true);
+  const [user, setValue] = useState();
   
-  const checkUser = async () => { 
-    const res = await contract.methods.checkUser().call({ from: accounts[0] })
-    setValue(res)
-    console.log(res)
+  const checkUser = async () => {
+    try{
+      const res = await contract.methods.getUser().call({ from: accounts[0] })
+      if(!user || user !== res) {
+        setValue(res[4])
+      }
+    } catch(error) {
+      console.log(error);
+    }
   }
+
+  useEffect(() => {
+    checkUser();
+    if(user) {
+      console.log(user.role);
+    }
+  });
+
+  console.log(user)
   
   function Page() {
-    
-    if(user === "false") {
-        return <RegisterUser setValue={setValue}/>
+
+    // setInterval(() => {
+    //   if(user !== undefined || user !== "") {
+    //     checkUser();
+    //   }
+    //   console.log("hio")
+    // }, 1000);
+    if(user === undefined || user === "") {
+      return <RegisterUser setValue={setValue}/>
     } else {
-        return <Interface role={user}/>
+      return <Interface role={user}/>
     }
     
   }

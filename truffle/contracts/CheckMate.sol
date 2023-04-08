@@ -27,35 +27,29 @@ contract CheckMate {
         uint256 stateID;
         string location;
         address party;
+        bool status;
         string dateAndTime;
     }
 
     mapping(uint256 => User) Users;
-
-    mapping (uint256 => mapping(uint256 => State)) locations;
-
-    mapping(uint256 => Product) allProducts;
-
-    mapping(uint256 => mapping(uint256 => uint256)) belongings;
-
-    mapping(uint256 => mapping(uint256 => uint256)) shipments; 
+    mapping(uint256 => Product) Products;
+    mapping (uint256 => mapping(uint256 => State)) Locations;
+    mapping(uint256 => mapping(uint256 => uint256)) Belongings;
+    mapping(uint256 => mapping(uint256 => uint256)) Shipments; 
 
     uint256 nthUser = 0; //For userID
-
     uint256 nthItem = 0; //For productID
-    
-    uint256 nthState = 0;
-    
-    uint256 nthShipment = 0;
+    uint256 nthState = 0; //For Locations
+    uint256 nthShipment = 0; //For Shipments
 
-    function addUser(string memory _name, string memory _email, string memory _role) public returns (bool) {
+    function addUser(string memory _name, string memory _email, string memory _role) public {
         User memory user = User({name: _name, email: _email, wallet: msg.sender, role: _role, userID: nthUser, totalBelongings: 0});
         Users[nthUser] = user;
         nthUser ++;
-        return true;
     }
 
     function getUser() public view returns (User memory) {
+        require(nthUser > 0, "No one is registered on the network.");
         for(uint i = 0; i < nthUser; i ++) {
             if(Users[i].wallet == msg.sender) {
                 return Users[i];
@@ -63,47 +57,39 @@ contract CheckMate {
         }
     }
 
-    function checkUser() public view returns (string memory) {
-        for(uint i = 0; i < nthUser; i ++) {
-            if(Users[i].wallet == msg.sender) {
-                return Users[i].role;
-            }
-        }
-        return "false";
-    }
-
     function updateUser(string memory _name, string memory _email) public {
-        for(uint i = 0; i < nthUser; i ++) {
-            if(Users[i].wallet == msg.sender) {
-                Users[i].name = _name;
-                Users[i].email = _email;
-                break;
-            }
-        }
+
+        User memory user = getUser();
+
+        require(keccak256(abi.encodePacked(user.name)) != keccak256(abi.encodePacked(_name)) || keccak256(abi.encodePacked(user.email)) != keccak256(abi.encodePacked(_email)));
+        Users[user.userID].name = _name;
+        Users[user.userID].email = _email;
     }
 
     //Adding new Product to the blockchain network
-    function registerProduct(string memory _name, uint _batch, uint[] memory supplier) public returns (bool) {
-        
+    function registerProduct(string memory _name, uint _batch, uint[] memory supplier) public {
+
         address ideal;
         
         Product memory newProduct = Product({productID: nthItem, productName: _name, batchID: _batch, creator: msg.sender, totalStates: 0, owner: ideal, isOwned: false});
 
         //Adding the new Product to the network
-        allProducts[nthItem] = newProduct;
-        addSupplier(nthItem, supplier);
+        Products[nthItem] = newProduct;
+        createShipment(nthItem, supplier);
 
         //Increment the product counter
         nthItem = nthItem + 1;
         emit Added(nthItem-1);
 
-        return true;
+        //Incrementing Manufacturer's total creations
+        User memory creator = getUser();
+        Users[creator.userID].totalBelongings += 1;
     }
 
-    function addSupplier(uint _productID, uint[] memory _supplier) public {
+    function createShipment(uint _productID, uint[] memory _supplier) public {
         for(uint i = 0; i < _supplier.length; i++) {
-            shipments[nthShipment][i] = _productID;
-            Users[i].totalBelongings += 1;
+            Shipments[nthShipment][_supplier[i]] = _productID;
+            Users[_supplier[i]].totalBelongings += 1;
         }
         nthShipment ++;
     }
@@ -116,143 +102,126 @@ contract CheckMate {
                 size ++;
             }
         }
-
-        User[] memory users = new User[](size);
+        User[] memory suppliers = new User[](size);
         uint position = 0;
         for(uint i = 0; i < nthUser; i ++) {
             if(keccak256(abi.encodePacked((Users[i].role))) == keccak256(abi.encodePacked(("supplier")))) {
-                users[position] = Users[i];
+                suppliers[position] = Users[i];
                 position ++;
             }
         }
-
-        return users;
+        return suppliers;
     }
 
-    function addInterLocation(uint256 _productID, string memory _location, string memory _dateTime) public returns (string memory) {
-        require(_productID<=nthItem);
+    function addInterLocation(uint256 _productID, string memory _location, string memory _dateTime) public {
+        require(_productID <= nthItem);
 
-        uint state_number = allProducts[_productID].totalStates;
-        State memory newState;
+        uint state_number = Products[_productID].totalStates;
 
-        newState.stateID = nthState;
-        newState.party =  msg.sender;
-        newState.location = _location;
-        newState.dateAndTime = _dateTime;
+        State memory state = State({stateID: nthState, party: msg.sender, location: _location, status: true, dateAndTime: _dateTime});
 
-        locations[_productID][state_number] = newState;
-
-        allProducts[_productID].totalStates = allProducts[_productID].totalStates + 1;
+        Locations[_productID][state_number] = state;
+        Products[_productID].totalStates = Products[_productID].totalStates + 1;
 
         nthState ++;
-        
-        return string("New state is added.");
     }
 
     function fetchStates(uint _productID) public view returns (State[] memory) {
 
-        State[] memory states = new State[](allProducts[_productID].totalStates);
+        uint size = Products[_productID].totalStates;
 
-        for (uint i = 0; i < allProducts[_productID].totalStates; i++) {
-            states[i] = locations[_productID][i];
+        State[] memory states = new State[](size);
+        for (uint i = 0; i < size; i++) {
+            states[i] = Locations[_productID][i];
         }
-
         return states;
-    }
-
-    function getNumber() public view returns (uint256) {
-        return nthItem;
-    }
-
-    function getProduct(uint _productID) public view returns (Product memory) {
-        return allProducts[_productID];
     }
 
     function addToBelongings(uint _productID) public {
 
         User memory user = getUser();
 
-        belongings[user.userID][user.totalBelongings] = _productID;
+        Belongings[user.userID][user.totalBelongings] = _productID;
 
         Users[user.userID].totalBelongings += 1;
 
-        allProducts[_productID].owner = user.wallet;
-        allProducts[_productID].isOwned = true;
+        Products[_productID].owner = user.wallet;
+        Products[_productID].isOwned = true;
 
     }
 
-    //For Consumers
+    function getProduct(uint _productID) public view returns (Product memory) {
+        require(_productID < nthItem, "Product doesn't exist on the network.");
+        return Products[_productID];
+    }
+
+    //For Consumer
     function getBelongings() public view returns (Product[] memory) {
         
-        User memory user = getUser();
+        User memory consumer = getUser();
+        uint size = consumer.totalBelongings;
 
-        uint belonging = user.totalBelongings;
+        Product[] memory collection = new Product[](size);
 
-        Product[] memory list_of_belongings = new Product[](belonging);
-
-        for(uint i = 0; i < belonging; i ++) {
-            uint productID = belongings[user.userID][i];
-
-            list_of_belongings[i] = getProduct(productID);
+        for(uint i = 0; i < size; i ++) {
+            uint productID = Belongings[consumer.userID][i];
+            collection[i] = getProduct(productID);
         }
-
-        return list_of_belongings;
+        return collection;
     }
 
     //For Manufacturer
     function getCreatedProducts() public view returns(Product[] memory) {
 
-        uint size = 0;
+        uint size = getUser().totalBelongings;
         uint counter = 0;
 
-        for(uint i = 0; i < nthItem; i ++) {
-            if(allProducts[i].creator == msg.sender) {
-                size ++;
-            }
-        }
-
-        Product[] memory list_of_products = new Product[](size);
+        Product[] memory products = new Product[](size);
 
         for(uint i = 0; i < nthItem; i ++) {
-            if(allProducts[i].creator == msg.sender) {
-                list_of_products[counter] = getProduct(i);
+            if(Products[i].creator == msg.sender) {
+                products[counter] = getProduct(i);
                 counter++;
             }
         }
-
-        return list_of_products;
+        return products;
     }
 
+    //For Supplier
     function getShipments() public view returns(Product[] memory) {
 
-        User memory user = getUser();
+        User memory supplier = getUser();
 
-        Product[] memory products = new Product[](user.totalBelongings);
+        Product[] memory allShipments = new Product[](supplier.totalBelongings);
         uint position = 0;
 
         for(uint i = 0; i < nthShipment; i ++) {
-                products[position] = getProduct(shipments[i][user.userID]);
-                position ++;
+            allShipments[position] = getProduct(Shipments[i][supplier.userID]);
+            position ++;
         }
-
-        return products;
+        return allShipments;
 
     }
 
     //List of products to display
-    function getAllProducts() public view returns(Product[] memory) {
-        
-        Product[] memory list_of_products = new Product[](nthItem);
+    function getAvailableProducts() public view returns(Product[] memory) {
 
-        uint counter = 0;
-
+        uint size = 0;
         for(uint i = 0; i < nthItem; i ++) {
-            if(allProducts[i].isOwned == false) {
-                list_of_products[counter] = getProduct(i);
-                counter++;
+            if(Products[i].isOwned == false) {
+                size++;
             }
         }
+        
+        Product[] memory products = new Product[](size);
+        uint position = 0;
 
-        return list_of_products;
+        for(uint i = 0; i < nthItem; i ++) {
+            if(Products[i].isOwned == false) {
+                products[position] = getProduct(i);
+                position++;
+            }
+        }
+        return products;
     }
 }

@@ -6,8 +6,8 @@ function AddLocation({product}) {
 
     const { state: { contract, accounts } } = useEth();
 
-    const [location, setLocation] = useState();
-    const [dateTime, setDateTime] = useState();
+    const [location, setLocation] = useState("");
+    const [dateTime, setDateTime] = useState("");
     const [form, setForm] = useState();
 
     const updateForm = () =>  {
@@ -58,11 +58,11 @@ function AddLocation({product}) {
                         <form className="row g-3">
                             <div className="col-md-6">
                                 <label className="mb-2 ms-1">Location </label>
-                                <input className="form-control" type="text" placeholder="Swansea" value={location} onChange={handleLocation}/>
+                                <input className="form-control" type="text" placeholder="Swansea" value={location} onChange={handleLocation} />
                             </div>
                             <div className="col-md-6">
                                 <label className="mb-2 ms-1" onClick={handleStamp} style={getButton}> Get Date & Time </label>
-                                <input className="form-control" type="text" value={dateTime} />
+                                <input className="form-control" type="text" value={dateTime} onChange={handleStamp}/>
                             </div>
                         </form>
                         <div className="d-flex justify-content-around">

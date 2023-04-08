@@ -95,13 +95,40 @@ hr {
   background-color: var(--dark-gray);
 }
 
-#App .container .demo .contract-container .btns .input-btn input {
+/* #App .container .demo .contract-container .btns .input-btn input {
   width: 4rem;
   text-align: center;
   font-family: monospace;
   font-size: 1.2rem;
-}
+} */
 
 #App .container footer {
   padding-bottom: 4rem;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+iframe {
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.6); /* IE */
+  -moz-transform: scale(1.6); /* FF */
+  -webkit-transform: scale(1.6); /* Safari and Chrome */
+  -o-transform: scale(1.6); /* Opera */
+  transform: scale(1.6);
+}
+
+body {
+  overflow: hidden; /* Hide scrollbars */
 }

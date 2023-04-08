@@ -17,10 +17,12 @@ function Supplier() {
         getShipments();
     }
 
+    console.log("Shipments => ", shipments)
+
     function Shipments() {
         return (
             shipments.map((shipment) => 
-                <AddLocation product={shipment} />
+                <AddLocation product={shipment} key={shipment[0]}/>
             )
         )
     }
@@ -28,10 +30,10 @@ function Supplier() {
     return(
         <div className="card mt-4 p-5">
             <h2 className="my-2">My Shipments</h2>
-            <br />
             {
-                !shipments ? <></> :
-                    <Shipments/>
+                shipments === undefined ? <></> :
+                    Object.keys(shipments).length === 0 ? <h4 className="text-center mt-3">You have no shipments! <br /> Time to rest 😴 </h4> :
+                        <Shipments/>
             }
         </div>
     )

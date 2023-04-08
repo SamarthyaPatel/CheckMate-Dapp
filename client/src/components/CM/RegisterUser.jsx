@@ -51,8 +51,7 @@ function RegisterUser({user, setPresence}){
                             <select className="form-select" onChange={handleRole}>
                                 <option value="consumer">Consumer</option>
                                 <option value="manufacturer">Manufacturer</option>
-                                <option value="supplier">Supplier</option>s
-                                <option value="admin">Adminitrator</option>
+                                <option value="supplier">Supplier</option>
                             </select>
                         </div>
                         <button onClick={addUser} className="btn btn-success mt-5 col-md-3">Register</button>
