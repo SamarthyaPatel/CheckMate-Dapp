@@ -33,6 +33,7 @@ function AddProduct({setForm, getProducts, suppliers}) {
     console.log("Suppliers: ", sup)
 
     const addProduct = async () => {
+        console.log(name, batch, sup)
         await contract.methods.registerProduct(name, batch, sup).send({ from: accounts[0] });
         setForm(false);
         getProducts();

@@ -56,9 +56,7 @@ function RegisterUser({user, setPresence}){
                         </div>
                         <button onClick={addUser} className="btn btn-success mt-5 col-md-3">Register</button>
                     </form>
-                    
                 </div>
-                
             </div>
         </div>
     )

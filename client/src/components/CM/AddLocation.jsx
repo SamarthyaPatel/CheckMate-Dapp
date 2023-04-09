@@ -49,7 +49,7 @@ function AddLocation({product}) {
     };
 
     return(
-        <div className="card p-4 mb-4" key={product[0]}>
+        <div className="card p-4 mb-4">
             <p className="m-0">Product Name: <span className="fw-bold">{product[1]}</span> </p>
             <p className="m-0">Batch ID: <span className="fw-bold">{product[2]}</span> </p>
             {

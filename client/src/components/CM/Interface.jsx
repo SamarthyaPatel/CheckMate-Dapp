@@ -7,7 +7,7 @@ import useEth from "../../contexts/EthContext/useEth";
 
 function Interface({role}) {
 
-    const [component, setComponent] = useState(2);
+    const [component, setComponent] = useState(3);
     const { state: { contract, accounts } } = useEth();
     const [user, setUser] = useState("");
 

@@ -11,14 +11,8 @@ function CM() {
   const [user, setValue] = useState();
   
   const checkUser = async () => {
-    try{
-      const res = await contract.methods.getUser().call({ from: accounts[0] })
-      if(!user || user !== res) {
-        setValue(res[4])
-      }
-    } catch(error) {
-      console.log(error);
-    }
+    const res = await contract.methods.getUser().call({ from: accounts[0] })
+    setValue(res[4])
   }
 
   useEffect(() => {

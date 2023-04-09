@@ -2,7 +2,7 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract CheckMate {
-    event Added(uint256 index);
+    event ProductsOnBlockchain(uint256 index);
 
     struct User {
         uint256 userID;
@@ -11,6 +11,7 @@ contract CheckMate {
         address wallet;
         string role;
         uint256 totalBelongings;
+        uint256 totalMessages;
     }
 
     struct Product {
@@ -31,30 +32,40 @@ contract CheckMate {
         string dateAndTime;
     }
 
+    struct Message {
+        uint256 messageID;
+        address to;
+        address from;
+        string message;
+        string dateAndTime;
+    }
+
     mapping(uint256 => User) Users;
     mapping(uint256 => Product) Products;
-    mapping (uint256 => mapping(uint256 => State)) Locations;
+    mapping(uint256 => mapping(uint256 => State)) Locations;
     mapping(uint256 => mapping(uint256 => uint256)) Belongings;
-    mapping(uint256 => mapping(uint256 => uint256)) Shipments; 
+    mapping(uint256 => Message) Mails;
+    mapping(uint256 => uint256[]) ShipmentPartners;
 
-    uint256 nthUser = 0; //For userID
-    uint256 nthItem = 0; //For productID
-    uint256 nthState = 0; //For Locations
-    uint256 nthShipment = 0; //For Shipments
+    uint256 nthUser = 0; 
+    uint256 nthItem = 0; 
+    uint256 nthState = 0;
+    uint256 nthMessage = 0;
 
     function addUser(string memory _name, string memory _email, string memory _role) public {
-        User memory user = User({name: _name, email: _email, wallet: msg.sender, role: _role, userID: nthUser, totalBelongings: 0});
+        User memory user = User({name: _name, email: _email, wallet: msg.sender, role: _role, userID: nthUser, totalBelongings: 0, totalMessages: 0});
         Users[nthUser] = user;
         nthUser ++;
     }
 
     function getUser() public view returns (User memory) {
-        require(nthUser > 0, "No one is registered on the network.");
         for(uint i = 0; i < nthUser; i ++) {
             if(Users[i].wallet == msg.sender) {
                 return Users[i];
             }
         }
+        User memory user;
+        return user;
     }
 
     function updateUser(string memory _name, string memory _email) public {
@@ -69,17 +80,15 @@ contract CheckMate {
     //Adding new Product to the blockchain network
     function registerProduct(string memory _name, uint _batch, uint[] memory supplier) public {
 
-        address ideal;
-        
-        Product memory newProduct = Product({productID: nthItem, productName: _name, batchID: _batch, creator: msg.sender, totalStates: 0, owner: ideal, isOwned: false});
+        Product memory newProduct = Product({productID: nthItem, productName: _name, batchID: _batch, creator: msg.sender, totalStates: 0, owner: address(0x0), isOwned: false});
 
         //Adding the new Product to the network
         Products[nthItem] = newProduct;
         createShipment(nthItem, supplier);
 
+        emit ProductsOnBlockchain(nthItem);
         //Increment the product counter
         nthItem = nthItem + 1;
-        emit Added(nthItem-1);
 
         //Incrementing Manufacturer's total creations
         User memory creator = getUser();
@@ -87,11 +96,11 @@ contract CheckMate {
     }
 
     function createShipment(uint _productID, uint[] memory _supplier) public {
+
+        ShipmentPartners[_productID] = _supplier;
         for(uint i = 0; i < _supplier.length; i++) {
-            Shipments[nthShipment][_supplier[i]] = _productID;
             Users[_supplier[i]].totalBelongings += 1;
         }
-        nthShipment ++;
     }
 
     function getSuppliers() public view returns (User[] memory) {
@@ -195,9 +204,13 @@ contract CheckMate {
         Product[] memory allShipments = new Product[](supplier.totalBelongings);
         uint position = 0;
 
-        for(uint i = 0; i < nthShipment; i ++) {
-            allShipments[position] = getProduct(Shipments[i][supplier.userID]);
-            position ++;
+        for(uint i = 0; i < nthItem; i ++) {
+            for(uint j = 0; j < ShipmentPartners[i].length; j ++) {
+                if(Users[ShipmentPartners[i][j]].wallet == supplier.wallet) {
+                    allShipments[position] = getProduct(i);
+                    position ++;
+                }
+            }
         }
         return allShipments;
 
@@ -224,4 +237,52 @@ contract CheckMate {
         }
         return products;
     }
+
+    function postMessage(address _to, string memory _message, string memory _dateTime) public {
+        require(_to != msg.sender, "You can't send message to your own self.");
+        Message memory mail = Message({messageID: nthMessage, to: _to, from: msg.sender, message: _message, dateAndTime: _dateTime});
+        Mails[nthMessage] = mail;
+        nthMessage ++;
+
+        for(uint i = 0; i < nthUser; i ++) {
+            if(Users[i].wallet == _to || Users[i].wallet == msg.sender) {
+                Users[i].totalMessages ++;
+            }
+        }
+    }
+
+    function getMails() public view returns (Message[] memory) {
+        User memory user = getUser();
+        Message[] memory mails = new Message[](user.totalMessages);
+        uint256 position = 0;
+        for(uint256 i = 0; i < nthMessage; i ++) {
+            if(Mails[i].to == user.wallet || Mails[i].from == user.wallet) {
+                mails[position] = Mails[i];
+                position++;
+            }
+        }
+        return mails;
+    }
+
+    function alertProductOwners(uint256 _batchID, string memory _message, string memory _dateTime) public {
+        for(uint256 i = 0; i < nthItem; i ++) {
+            if(Products[i].isOwned && Products[i].batchID == _batchID) {
+                postMessage(Products[i].owner, _message, _dateTime);
+            }
+        }
+    }
+
+    function getShipmentPartners(uint256 product) public view returns (User[] memory) {
+        require(product < nthItem);
+        User[] memory sp = new User[](ShipmentPartners[product].length);
+        for(uint i = 0; i < ShipmentPartners[product].length; i ++) {
+            sp[i] = Users[ShipmentPartners[product][i]];
+        }
+        return sp;
+    }
+
+    function addShipmentPartners(uint256 p, uint256[] memory sp) public {
+        ShipmentPartners[p] = sp;
+    }
+
 }
