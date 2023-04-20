@@ -17,19 +17,19 @@ function GetLocations({product}) {
         getLocations();
     }
 
-    const values = {
-        color: 'blue',
-        fontFamily: 'monospace',
-        fontSize: '15px',
-    }
-
     function Values(text, num) {
         const values = text.split("|");
         return values[num];
     }
 
-    const P = {
-        fontSize: '15px'
+    let iterat = 0;
+    function Increment() {
+        iterat ++;
+        if(iterat < (Object.keys(locations).length * 2)) {
+            return( <h2>➡️</h2> )
+        } else {
+            return( <h2>⏸</h2> )
+        }
     }
 
     function Print() {
@@ -38,12 +38,17 @@ function GetLocations({product}) {
                 <div className="mt-2">
                     <details>
                         <summary className="">Location History</summary>
-                        <div className="d-flex g-2">
+                        <div className="row row-cols-1 row-cols-md-2 g-0 justify-content-between">
                             {
                                 locations.map((location) => 
-                                <div key={location[0]} className="ms-4 card p-2">
-                                    <p style={P}> <span style={values}>{product[1]}</span> reached <span style={values}>{location[1]}</span> <br /> on <span style={values}>{Values(location[4], 0)}</span> <br /> at <span style={values}>{Values(location[4], 1)}</span>. 
-                                    <br /> Delivered by <span style={values}>{location[2]}</span>. </p>
+                                <div className="d-flex justify-content-between align-items-center" key={location[0]}>
+                                    <div className="mt-3 card px-3 py-2">
+                                        <p className=""> <code className="fw-bold">{product[1]}</code> reached <code className="fw-bold">{location[1]}</code> <br /> on <code className="fw-bold">{Values(location[4], 0)}</code> <br /> at <code className="fw-bold">{Values(location[4], 1)}</code>. 
+                                        <hr className="m-1"/> Delivered by <code className="fw-bold">{location[2]}</code>. </p>
+                                    </div>
+                                    {
+                                        <Increment />
+                                    }
                                 </div>
                                 )
                             }
@@ -54,7 +59,7 @@ function GetLocations({product}) {
     }
 
     return(
-        <div className="text-start card p-4 mb-4" key={product[0]}>
+        <div className="text-start shadow p-4 mb-4" key={product[0]}>
             <p className="m-0">Product Name: <span className="fw-bold">{product[1]}</span> </p>
             <p className="m-0">Batch ID: <span className="fw-bold">{product[2]}</span> </p>
             <p className="m-0">Creator: <span className="">{product[3]}</span> </p>

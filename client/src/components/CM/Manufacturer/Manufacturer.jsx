@@ -1,7 +1,7 @@
-import useEth from "../../contexts/EthContext/useEth";
+import useEth from "../../../contexts/EthContext/useEth";
 import { useState } from "react";
 import AddProduct from "./AddProduct.jsx";
-import GetLocations from "./GetLocations.jsx";
+import GetLocations from "../GetLocations.jsx";
 
 function Manufacturer() {
 
@@ -28,7 +28,7 @@ function Manufacturer() {
     function Product() {
         return(
             <div className="text-center">
-                <button className="btn ms-5" onClick={() => {setForm(true)}} style={{backgroundColor: "Aquamarine"}}> <h3 className="px-2">Add Products <b>+</b> </h3>  </button>
+                <button className="btn btn-light m-5" onClick={() => {setForm(true)}}> <h4 className="px-2"> Register Product on Blockchain <b>+</b> </h4>  </button>
             </div>
         )
     }
@@ -51,18 +51,22 @@ function Manufacturer() {
     }
 
     return(
-        <div className="card mt-4 p-5">
-            {
-                !form ? <Product />:
-                    <AddProduct setForm={setForm} suppliers={suppliers} getProducts={getProducts}/>
-            }
-            <div className="mt-5 p-2 pt-4">
-                <h2 className="">My Products</h2>
+        <div className="mt-4 p-2">
+            <div className="card-body">
+            <h2 className="p-3 text-success-emphasis bg-success-subtle border border-success-subtle rounded-3"> Add Product </h2>
                 {
-                    products === undefined ? <></> :
-                        Object.keys(products).length === 0 ? <h4 className="text-center mt-4">Let's create an amazing Product! 📦 </h4> :
-                            <Display />
+                    !form ? <Product />:
+                        <AddProduct setForm={setForm} suppliers={suppliers} getProducts={getProducts}/>
                 }
+                <br />
+                <h2 className="p-3 text-info-emphasis bg-info-subtle border border-info-subtle rounded-3">My created Products</h2>
+                <div className="mt-4">
+                    {
+                        products === undefined ? <></> :
+                            Object.keys(products).length === 0 ? <h4 className="text-center mt-4">Let's create an amazing Product! 📦 </h4> :
+                                <Display />
+                    }  
+                </div>
             </div>
         </div>
     )

@@ -1,7 +1,8 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.9.0;
 
 contract CheckMate {
+
     event ProductsOnBlockchain(uint256 index);
 
     struct User {
@@ -78,21 +79,23 @@ contract CheckMate {
     }
 
     //Adding new Product to the blockchain network
-    function registerProduct(string memory _name, uint _batch, uint[] memory supplier) public {
+    function registerProduct(string memory _name, uint _batch, uint[] memory _suppliers) public {
+
+        User memory activeUser = getUser();
+        require(keccak256(abi.encodePacked(activeUser.role)) == keccak256(abi.encodePacked("manufacturer")));
 
         Product memory newProduct = Product({productID: nthItem, productName: _name, batchID: _batch, creator: msg.sender, totalStates: 0, owner: address(0x0), isOwned: false});
 
         //Adding the new Product to the network
         Products[nthItem] = newProduct;
-        createShipment(nthItem, supplier);
+        createShipment(nthItem, _suppliers);
 
         emit ProductsOnBlockchain(nthItem);
         //Increment the product counter
-        nthItem = nthItem + 1;
+        nthItem += 1;
 
         //Incrementing Manufacturer's total creations
-        User memory creator = getUser();
-        Users[creator.userID].totalBelongings += 1;
+        Users[activeUser.userID].totalBelongings += 1;
     }
 
     function createShipment(uint _productID, uint[] memory _supplier) public {
@@ -123,14 +126,15 @@ contract CheckMate {
     }
 
     function addInterLocation(uint256 _productID, string memory _location, string memory _dateTime) public {
-        require(_productID <= nthItem);
+        User memory activeUser = getUser();
+        require(keccak256(abi.encodePacked((activeUser.role))) == keccak256(abi.encodePacked(("supplier"))) && _productID < nthItem);
 
         uint state_number = Products[_productID].totalStates;
 
-        State memory state = State({stateID: nthState, party: msg.sender, location: _location, status: true, dateAndTime: _dateTime});
+        State memory newState = State({stateID: nthState, party: msg.sender, location: _location, status: true, dateAndTime: _dateTime});
 
-        Locations[_productID][state_number] = state;
-        Products[_productID].totalStates = Products[_productID].totalStates + 1;
+        Locations[_productID][state_number] = newState;
+        Products[_productID].totalStates += 1;
 
         nthState ++;
     }
@@ -213,7 +217,6 @@ contract CheckMate {
             }
         }
         return allShipments;
-
     }
 
     //List of products to display
@@ -272,17 +275,17 @@ contract CheckMate {
         }
     }
 
-    function getShipmentPartners(uint256 product) public view returns (User[] memory) {
-        require(product < nthItem);
-        User[] memory sp = new User[](ShipmentPartners[product].length);
-        for(uint i = 0; i < ShipmentPartners[product].length; i ++) {
-            sp[i] = Users[ShipmentPartners[product][i]];
+    function getShipmentPartners(uint256 _product) public view returns (User[] memory) {
+        require(_product < nthItem);
+        User[] memory sp = new User[](ShipmentPartners[_product].length);
+        for(uint i = 0; i < ShipmentPartners[_product].length; i ++) {
+            sp[i] = Users[ShipmentPartners[_product][i]];
         }
         return sp;
     }
 
-    function addShipmentPartners(uint256 p, uint256[] memory sp) public {
-        ShipmentPartners[p] = sp;
+    function addShipmentPartners(uint256 _product, uint256[] memory _sp) public {
+        ShipmentPartners[_product] = _sp;
     }
 
 }

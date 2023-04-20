@@ -1,12 +1,12 @@
-import useEth from "../../contexts/EthContext/useEth";
+import useEth from "../../../contexts/EthContext/useEth";
 import { useState } from "react";
-import GetLocations from "./GetLocations.jsx";
+import GetLocations from "../GetLocations.jsx";
 
 function Consumer({user}) {
 
     const { state: { contract, accounts } } = useEth();
     const [product, setProduct] = useState();
-    const [mb, setMB] = useState();
+    const [mb, setMB] = useState(0);
     const [id, setID] = useState('');
 
     const verifyProduct = async () => {
@@ -18,7 +18,6 @@ function Consumer({user}) {
                 console.log(err);
                 setProduct("unauthorised");
             }
-            console.log("Product => ",product);
         } else {
             alert("Please enter product code to verify.");
         }
@@ -26,13 +25,13 @@ function Consumer({user}) {
     };
 
     const addToBelongings = async () => {
-        const res = await contract.methods.addToBelongings(id-1).send({ from: accounts[0] });
-        console.log(res)
+        await contract.methods.addToBelongings(id-1).send({ from: accounts[0] });
+        getBelongings();
     }
 
     const getBelongings = async () => {
         const belongings = await contract.methods.getBelongings().call({ from: accounts[0] });
-        console.log("Belonging => ", belongings)
+        // console.log("Belonging => ", belongings)
         setMB(belongings)
     }
 
@@ -55,7 +54,6 @@ function Consumer({user}) {
                                 style={{width: "30px", height: "30px"}}>
                             </lord-icon>
                         </div>
-                        {/* <iframe name="myframe" src="https://giphy.com/embed/i8dbwev03O4o5HZ6oc" width="480" height="268" title="GIF"></iframe> */}
                     </div> :
                         <div className="">
                             {
@@ -76,8 +74,8 @@ function Consumer({user}) {
                 <GetLocations product={product} key={product[0]}/>
                 {
                     product.owner !== user.wallet && !product.isOwned ? <button className="btn btn-success col-4" onClick={addToBelongings}> Add to Belongings </button> :
-                        product.owner !== user.wallet ? <button className="btn btn-light col-4" disabled> {product.owner} owns this. </button> :
-                            <button className="btn btn-light col-4" disabled> You own this product. </button>
+                        product.owner !== user.wallet ? <button className="btn shadow" disabled> {product.owner} owns this. </button> :
+                            <button className="btn  col-3 shadow" disabled> You own this product. </button>
                 }
             </div>
         )
@@ -99,16 +97,27 @@ function Consumer({user}) {
         fontSize: "17px",
     }
 
-    console.log(id)
+    console.log(" User B => ", user.totalBelongings)
+    console.log(" Belong => ", mb)
 
     return(
-        <div className="card mt-4 p-2" style={{backgroundColor: "skyblue"}}>
+        <div className="mt-4 p-2">
             <div className="card-body">
+                <h2 className="p-3 text-info-emphasis bg-info-subtle border border-info-subtle rounded-3">Verify Product</h2>
+                <div className="d-flex justify-content-around">
+                    <div className="form-floating my-4 p-0 d-flex col-5">
+                        <input type="number" className="form-control" placeholder="Product Code" value={id} onChange={handleID}/>
+                        <label style={label} >Product code</label>
+                    </div>
+                    <button className="btn btn-light col-3 p-0 my-4 shadow" onClick={verifyProduct}> <b>Verify</b> </button>
+                </div>
+                <Output />
+                <br /><br />
                 {
-                    user.totalBelongings === 0 ? <h1> My Belongings </h1> :
-                    <h1> My Belongings [{user.totalBelongings}] </h1>
+                    mb === 0 ? <h2 className="p-3 text-success-emphasis bg-success-subtle border border-success-subtle rounded-3"> My Belongings </h2> :
+                    <h2 className="p-3 text-success-emphasis bg-success-subtle border border-success-subtle rounded-3"> My Belongings [{user.totalBelongings}] </h2>
                 }
-                <div className="mt-4" style={{backgroundColor: "skyblue"}}>
+                <div className="mt-4">
                     {
                         mb === undefined ? <FetchData /> :
                             <GetBelongings />
@@ -116,15 +125,6 @@ function Consumer({user}) {
                 </div>
                 <br />
                 <br />
-                <h1>Verify Product</h1>
-                <div className="d-flex justify-content-around">
-                    <div className="form-floating my-4 p-0 d-flex col-5">
-                        <input type="number" className="form-control" placeholder="Product Code" value={id} onChange={handleID}/>
-                        <label style={label} >Product code</label>
-                    </div>
-                    <button className="btn btn-light col-3 p-0 my-4" onClick={verifyProduct}> <b>Verify</b> </button>
-                </div>
-                <Output />
             </div>
         </div>
     )

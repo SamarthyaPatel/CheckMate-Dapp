@@ -1,4 +1,4 @@
-import useEth from "../../contexts/EthContext/useEth";
+import useEth from "../../../contexts/EthContext/useEth";
 import { useState } from "react";
 
 
@@ -33,10 +33,20 @@ function AddProduct({setForm, getProducts, suppliers}) {
     console.log("Suppliers: ", sup)
 
     const addProduct = async () => {
-        console.log(name, batch, sup)
-        await contract.methods.registerProduct(name, batch, sup).send({ from: accounts[0] });
-        setForm(false);
-        getProducts();
+        if(name !== "" && batch !== "") {
+            console.log(name, batch, sup)
+            await contract.methods.registerProduct(name, batch, sup).send({ from: accounts[0] });
+            setForm(false);
+            getProducts();
+        } else {
+            if(name === "" && batch === "") {
+                alert("Please enter name and batch code for product.")
+            } else if(name === "") {
+                alert("Please enter product name.");
+            } else if(batch === "") {
+                alert("Please enter product batch code.");
+            }            
+        }
     };
 
     const label = {
@@ -44,9 +54,9 @@ function AddProduct({setForm, getProducts, suppliers}) {
     }
 
     return(
-        <div className="card">
+        <div className="shadow m-2 mt-3 p-2">
             <div className="card-body">
-                <form className="">
+                <form className="m-3">
                     <div className="row g-3 justify-content-around">
                         <div className="form-floating my-4 p-0 d-flex col-md-5">
                             <input type="text" className="form-control" placeholder="Product Name" value={name} onChange={handleName}/>
@@ -71,11 +81,12 @@ function AddProduct({setForm, getProducts, suppliers}) {
                         }
                     </div>
                 </form>
-                <div className="d-flex justify-content-around">
-                    <button className="col-3 mt-5 btn btn-danger" onClick={() => {setForm(false)}}>Cancel</button>
-                    <button className="col-3 mt-5 btn btn-success" onClick={addProduct}>Save</button>
+                <div className="d-flex justify-content-center">
+                    <button className="shadow col-2 mt-5 btn text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3" onClick={() => {setForm(false)}}>Cancel</button>
+                    <button className="shadow col-2 offset-2 mt-5 btn text-success-emphasis bg-success-subtle border border-success-subtle rounded-3" onClick={addProduct}>Save</button>
                 </div>
             </div>
+            <br />
         </div>
     )
 }

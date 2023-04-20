@@ -20,7 +20,7 @@ function Profile({user}) {
     function Edit() {
         return(
             <div>
-                <div className="card-body">
+                <div className="card-body mt-5">
                     <form className="row g-3">
                         <div className="col-md-6">
                             <label className="">Name: </label>
@@ -36,7 +36,7 @@ function Profile({user}) {
                         </div>
                     </form>
                     <div className="d-flex justify-content-around">
-                    <button className="col-3 mt-5 btn btn-light" onClick={updateForm}>Edit</button>
+                    <button className="shadow col-2 mt-5 btn btn-light" onClick={updateForm}>Edit</button>
                     </div>
                 </div>
                 
@@ -45,7 +45,7 @@ function Profile({user}) {
     }
 
     return (
-    <div className="card mt-4 p-2">
+    <div className="mt-4 p-2">
         {
             !form ? <Edit/> :
                 <UpdateProfile name={name} setName={setName} email={email} setEmail={setEmail} wallet={wallet} updateForm={updateForm}/>

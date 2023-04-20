@@ -1,4 +1,4 @@
-import useEth from "../../contexts/EthContext/useEth";
+import useEth from "../../../contexts/EthContext/useEth";
 import { useState } from "react";
 import AddLocation from "./AddLocation";
 
@@ -22,19 +22,21 @@ function Supplier() {
     function Shipments() {
         return (
             shipments.map((shipment) => 
-                <AddLocation product={shipment} key={shipment[0]}/>
+                <AddLocation product={shipment} key={shipment[0]} getShipments={getShipments}/>
             )
         )
     }
 
     return(
-        <div className="card mt-4 p-5">
-            <h2 className="my-2">My Shipments</h2>
-            {
-                shipments === undefined ? <></> :
-                    Object.keys(shipments).length === 0 ? <h4 className="text-center mt-3">You have no shipments! <br /> Time to rest 😴 </h4> :
-                        <Shipments/>
-            }
+        <div className="mt-4 p-2">
+            <div className="card-body">
+                <h2 className="p-3 text-success-emphasis bg-success-subtle border border-success-subtle rounded-3"> My Shipments </h2>
+                {
+                    shipments === undefined ? <></> :
+                        Object.keys(shipments).length === 0 ? <h4 className="text-center mt-3">You have no shipments! <br /> Time to rest 😴 </h4> :
+                            <Shipments/>
+                }
+            </div>
         </div>
     )
 }

@@ -21,7 +21,7 @@ function RegisterUser({user, setPresence}){
         setRole(event.target.value)
     }
 
-    const addUser = async e =>  {
+    const addUser = async () =>  {
         if(name === "" && email ==="") {
             alert("Please enter the details to Register.")
             return;
@@ -34,7 +34,7 @@ function RegisterUser({user, setPresence}){
 
     return (
         <div className="container my-5 text-center">
-            <h2>Welcome to CheckMate</h2>
+            <h2 className="shadow mt-5 p-3 text-dark-emphasis bg-dark-subtle border border-dark-subtle rounded-3">Welcome to CheckMate Dapp</h2>
             <div>
                 <div className="card-body">
                     <form className="row g-3 mt-5 justify-content-center">
@@ -54,7 +54,7 @@ function RegisterUser({user, setPresence}){
                                 <option value="supplier">Supplier</option>
                             </select>
                         </div>
-                        <button onClick={addUser} className="btn btn-success mt-5 col-md-3">Register</button>
+                        <button onClick={addUser} className="shadow col-2 mt-5 btn text-success-emphasis bg-success-subtle border border-success-subtle rounded-3">Register</button>
                     </form>
                 </div>
             </div>

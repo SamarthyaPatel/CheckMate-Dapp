@@ -1,6 +1,6 @@
-import Consumer from "./Consumer";
-import Manufacturer from "./Manufacturer";
-import Supplier from "./Supplier";
+import Consumer from "./Consumer/Consumer";
+import Manufacturer from "./Manufacturer/Manufacturer";
+import Supplier from "./Supplier/Supplier";
 
 
 function Home({role, user}) {

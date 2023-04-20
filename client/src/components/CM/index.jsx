@@ -22,27 +22,18 @@ function CM() {
     }
   });
 
-  console.log(user)
+  console.log("index.jsx \nUser => ", user)
   
   function Page() {
-
-    // setInterval(() => {
-    //   if(user !== undefined || user !== "") {
-    //     checkUser();
-    //   }
-    //   console.log("hio")
-    // }, 1000);
     if(user === undefined || user === "") {
       return <RegisterUser setValue={setValue}/>
     } else {
       return <Interface role={user}/>
     }
-    
   }
 
   return (
     <div className="container">
-        <button onClick={checkUser}>Enter</button>
         {
         !state.artifact ? <NoticeNoArtifact /> :
           !state.contract ? <NoticeWrongNetwork /> :

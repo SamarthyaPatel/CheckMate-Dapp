@@ -1,4 +1,4 @@
-import useEth from "../../contexts/EthContext/useEth";
+import useEth from "../../../contexts/EthContext/useEth";
 
 function UpdateProfile( {name, email, wallet, updateForm, setName, setEmail} ) {
 
@@ -19,7 +19,7 @@ function UpdateProfile( {name, email, wallet, updateForm, setName, setEmail} ) {
 
     return(
         <div>
-            <div className="card-body">
+            <div className="card-body mt-5">
                 <form className="row g-3">
                     <div className="col-md-6">
                         <label className="">Name: </label>
@@ -35,8 +35,8 @@ function UpdateProfile( {name, email, wallet, updateForm, setName, setEmail} ) {
                     </div>
                 </form>
                 <div className="d-flex justify-content-around">
-                    <button className="col-3 mt-5 btn btn-danger" onClick={updateForm}>Cancel</button>
-                    <button className="col-3 mt-5 btn btn-success" onClick={update}>Save</button>
+                    <button className="shadow col-2 mt-5 btn text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3" onClick={updateForm}>Cancel</button>
+                    <button className="shadow col-2 mt-5 btn text-success-emphasis bg-success-subtle border border-success-subtle rounded-3" onClick={update}>Save</button>
                 </div>
             </div>
             

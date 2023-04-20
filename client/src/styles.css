@@ -128,3 +128,7 @@ input[type=checkbox]
   -o-transform: scale(1.6); /* Opera */
   transform: scale(1.6);
 }
+
+#getButton:hover {
+  cursor: pointer;
+}
