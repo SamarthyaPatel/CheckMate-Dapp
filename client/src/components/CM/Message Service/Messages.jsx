@@ -105,7 +105,7 @@ function Messages({role, user}) {
                             <div key={mail.messageID}>
                                 <DisplayMessage mail={mail} />
                             </div>
-                        )
+                        ).reverse()
                 }
             </div>
         </div>

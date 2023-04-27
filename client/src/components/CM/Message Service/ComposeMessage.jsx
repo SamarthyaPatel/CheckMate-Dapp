@@ -60,7 +60,7 @@ function ComposeMessage({role, item, contract, accounts, getMessage}) {
                     !form ? <button className="btn text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3" onClick={() => {setForm(true)}}>Send Message</button> :
                         <div className="d-flex">
                             <button className="btn text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3" onClick={() => {setForm(false)}}>Cancel</button>
-                            <input type="text" value={message} onChange={handleMessage} className="form-control mx-2"/>
+                            <textarea type="text" value={message} onChange={handleMessage} className="form-control mx-2"/>
                             <button className="btn text-success-emphasis bg-success-subtle border border-success-subtle rounded-3" onClick={sendMessage}>Send</button>
                         </div>
                 } 

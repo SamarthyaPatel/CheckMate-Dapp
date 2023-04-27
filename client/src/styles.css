@@ -1,7 +1,6 @@
-/* html {
-  font-size: 10px;
-  font-family: sans-serif;
-} */
+html {
+  user-select: none;
+}
 
 * {
   margin: 0;
@@ -131,4 +130,28 @@ input[type=checkbox]
 
 #getButton:hover {
   cursor: pointer;
+}
+
+.head {
+  color: rgba(253, 126, 20, .9);
+  background: rgba(253, 126, 20, .2);
+  border-color: rgba(253, 126, 20, .4);
+  border-width: 1px;
+  border-style: solid;
+  
+}
+
+.LEFT {
+  padding-right: 10px;
+  border-right: 1px dashed grey;
+  height: 100%;
+}
+
+#RecommendedProduct:hover {
+  cursor: pointer;
+}
+
+.DISCLAIMER {
+  border-top: 1px dashed grey;
+  border-bottom: 1px dashed grey;
 }

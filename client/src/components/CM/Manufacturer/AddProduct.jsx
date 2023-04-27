@@ -30,8 +30,6 @@ function AddProduct({setForm, getProducts, suppliers}) {
         }
     }
 
-    console.log("Suppliers: ", sup)
-
     const addProduct = async () => {
         if(name !== "" && batch !== "") {
             console.log(name, batch, sup)

@@ -32,7 +32,6 @@ function Interface({role}) {
                 home.current.classList = "btn btn-dark";
                 message.current.classList = "btn btn-dark";
             }
-            // profile.current
             return <Profile user={user}/>
         } else if(component === 2){
             if(home.current !== undefined){
@@ -40,7 +39,7 @@ function Interface({role}) {
                 profile.current.classList = "btn btn-dark";
                 message.current.classList = "btn btn-dark";
             }
-            return <Home role={role} user={user}/>
+            return <Home role={role} user={user} fetchUser={fetchUser}/>
         } else if(component === 3) {
             if(message.current !== undefined){
                 message.current.classList = "btn btn-dark border border-light-subtle rounded-3";

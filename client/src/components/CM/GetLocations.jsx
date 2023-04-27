@@ -37,7 +37,7 @@ function GetLocations({product}) {
             locations === undefined ? <></>:
                 <div className="mt-2">
                     <details>
-                        <summary className="">Location History</summary>
+                        <summary className="text-info">Location History</summary>
                         <div className="row row-cols-1 row-cols-md-2 g-0 justify-content-between">
                             {
                                 locations.map((location) => 

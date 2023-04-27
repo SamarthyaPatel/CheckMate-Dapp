@@ -52,11 +52,16 @@ contract CheckMate {
     uint256 nthItem = 0; 
     uint256 nthState = 0;
     uint256 nthMessage = 0;
+    uint256 availableProducts = 0;
+    uint256 totalConsumers = 0;
 
     function addUser(string memory _name, string memory _email, string memory _role) public {
         User memory user = User({name: _name, email: _email, wallet: msg.sender, role: _role, userID: nthUser, totalBelongings: 0, totalMessages: 0});
         Users[nthUser] = user;
         nthUser ++;
+        if(keccak256(abi.encodePacked((_role))) == keccak256(abi.encodePacked(("consumer")))) {
+            totalConsumers += 1;
+        }
     }
 
     function getUser() public view returns (User memory) {
@@ -96,6 +101,8 @@ contract CheckMate {
 
         //Incrementing Manufacturer's total creations
         Users[activeUser.userID].totalBelongings += 1;
+
+        availableProducts += 1;
     }
 
     function createShipment(uint _productID, uint[] memory _supplier) public {
@@ -219,28 +226,6 @@ contract CheckMate {
         return allShipments;
     }
 
-    //List of products to display
-    function getAvailableProducts() public view returns(Product[] memory) {
-
-        uint size = 0;
-        for(uint i = 0; i < nthItem; i ++) {
-            if(Products[i].isOwned == false) {
-                size++;
-            }
-        }
-        
-        Product[] memory products = new Product[](size);
-        uint position = 0;
-
-        for(uint i = 0; i < nthItem; i ++) {
-            if(Products[i].isOwned == false) {
-                products[position] = getProduct(i);
-                position++;
-            }
-        }
-        return products;
-    }
-
     function postMessage(address _to, string memory _message, string memory _dateTime) public {
         require(_to != msg.sender, "You can't send message to your own self.");
         Message memory mail = Message({messageID: nthMessage, to: _to, from: msg.sender, message: _message, dateAndTime: _dateTime});
@@ -286,6 +271,30 @@ contract CheckMate {
 
     function addShipmentPartners(uint256 _product, uint256[] memory _sp) public {
         ShipmentPartners[_product] = _sp;
+    }
+
+        function getAvailableProducts() public view returns(Product[] memory) {
+        Product[] memory products = new Product[](availableProducts);
+        uint position = 0;
+        for(uint i = 0; i < nthItem; i ++) {
+            if(Products[i].isOwned == false) {
+                products[position] = getProduct(i);
+                position++;
+            }
+        }
+        return products;
+    }
+
+    function getConsumers() public view returns(User[] memory) {
+        User[] memory consumers = new User[](totalConsumers);
+        uint position = 0;
+        for(uint i = 0; i < nthItem; i ++) {
+            if(keccak256(abi.encodePacked((Users[i].role))) == keccak256(abi.encodePacked(("consumer")))) {
+                consumers[position] = Users[i];
+                position++;
+            }
+        }
+        return consumers;
     }
 
 }

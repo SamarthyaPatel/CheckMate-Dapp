@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useEth from "../../contexts/EthContext/useEth";
 
-function RegisterUser({user, setPresence}){
+function RegisterUser({user, checkUser}){
 
     const { state: { contract, accounts } } = useEth();
 
@@ -10,26 +10,26 @@ function RegisterUser({user, setPresence}){
     const [role, setRole] = useState("consumer");
 
     const handleName = event => {
-        setName(event.target.value)
+        setName(event.target.value);
     }
 
     const handleEmail = event => {
-        setEmail(event.target.value)
+        setEmail(event.target.value);
     }
 
     const handleRole = event => {
-        setRole(event.target.value)
+        setRole(event.target.value);
     }
 
     const addUser = async () =>  {
         if(name === "" && email ==="") {
             alert("Please enter the details to Register.")
+            checkUser();
             return;
         }
         await contract.methods.addUser(name, email, role).send({ from: accounts[0] });
-        setPresence(true)
-        console.log("User: " + user)
-        return;
+        checkUser();
+        console.log("User: " + user);
     };
 
     return (
