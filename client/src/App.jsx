@@ -1,6 +1,6 @@
 import { EthProvider } from "./contexts/EthContext";
 import CM from "./components/CM";
-// import Footer from "./components/Footer";
+import Footer from "./components/Footer";
 
 function App() {
 
@@ -9,8 +9,8 @@ function App() {
       <div id="App">
         <div className="container">
           <CM />
-          {/* <hr /> */}
-          {/* <Footer /> */}
+          <hr />
+          <Footer />
         </div>
       </div>
     </EthProvider>
